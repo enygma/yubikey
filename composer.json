@@ -1,0 +1,24 @@
+{
+    "name":"enygma/yubikey",
+    "type":"library",
+    "description":"PHP library to interface with the Yubikey REST API",
+    "keywords":["yubikey", "yubico", "twofactor", "rest", "api"],
+    "homepage":"https://github.com/enygma/yubikey.git",
+    "license":"MIT",
+    "authors":[
+        {
+            "name":"Chris Cornutt",
+            "email":"ccornutt@phpdeveloper.org",
+            "homepage":"http://www.phpdeveloper.org/"
+        }
+    ],
+    "require":{
+        "php":">=5.3.1",
+        "guzzle/guzzle": "3.0.*@dev"
+    },
+    "autoload":{
+        "psr-0":{
+            "Yubikey":"src/"
+        }
+    }
+}
