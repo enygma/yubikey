@@ -15,4 +15,20 @@ Look at the `test.php` example script to see how to use it. This can be executed
 
 `php test.php [generated key]`
 
+Example code:
+
+```
+<?php
+
+$apiKey = 'dGVzdGluZzEyMzQ1Njc4OTA=';
+$clientId = '12345';
+
+$v = new \Yubikey\Validate($apiKey);
+$response = $v->check($inputtedKey, $clientId);
+
+echo ($response->success() === true) ? 'success!' : 'you failed. aw.';
+
+?>
+```
+
 @author Chris Cornutt <ccornutt@phpdeveloper.org>
