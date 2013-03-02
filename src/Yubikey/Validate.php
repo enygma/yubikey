@@ -52,9 +52,10 @@ class Validate
      */
     private $otp = null;
 
-    public function __construct($apiKey)
+    public function __construct($apiKey, $clientId)
     {
         $this->setApiKey($apiKey);
+        $this->setClientId($clientId);
     }
 
     /**
@@ -98,6 +99,25 @@ class Validate
     public function getOtp()
     {
         return $this->otp;
+    }
+
+    /**
+     * Get the current Client ID
+     * @return integer Client ID
+     */
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
+     * Set the current Client ID
+     * @param integer $clientId Client ID
+     */
+    public function setClientId($clientId)
+    {
+        $this->clientId = $clientId;
+        return $this;
     }
 
     /**
@@ -201,7 +221,7 @@ class Validate
      * @throws \InvalidArgumentException when OTP length is invalid
      * @return \Yubikey\Response object
      */
-    public function check($otp, $clientId)
+    public function check($otp)
     {
         $otp = trim($otp);
         if (strlen($otp) < 32 || strlen($otp) > 48) {
@@ -209,14 +229,16 @@ class Validate
         }
 
         $client = $this->getClient();
-
         if ($client == null) {
             throw new \InvalidArgumentException('Client cannot be null');
         }
 
-        $clientId = ($clientId === null) ? 1 : $clientId;
-        $nonce = md5(mt_rand());
+        $clientId = $this->getClientId();
+        if ($client == null) {
+            throw new \InvalidArgumentException('Client ID cannot be null');
+        }        
 
+        $nonce = md5(mt_rand());
         $params = array(
             'id' => $clientId,
             'otp' => trim($otp),
@@ -230,6 +252,7 @@ class Validate
 
         $request = $client->get($url);
         $response = $request->send();
+        echo $response->getBody(true);
         $response = $this->parseResponse($response->getBody(true));
 
         $response = new Response($response);
