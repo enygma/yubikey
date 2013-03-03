@@ -136,7 +136,7 @@ class Validate
      */
     public function setUseSecure($use)
     {
-        if (!is_boolean($use)) {
+        if (!is_bool($use)) {
             throw new \InvalidArgumentException('"Use secure" value must be boolean');
         }
         $this->useSecure = $use;
