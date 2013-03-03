@@ -50,4 +50,84 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
         $this->validate->setOtp($otp);
         $this->assertEquals($this->validate->getOtp(), $otp);
     }
+
+    /**
+     * Test that the getter/setter for the Client ID works correctly
+     * @covers \Yubikey\Validate::getClientId
+     * @covers \Yubikey\Validate::setClientId
+     */
+    public function testGetSetClientId()
+    {
+        $clientId = 12345;
+
+        $this->validate->setClientId($clientId);
+        $this->assertEquals($clientId, $this->validate->getClientId());
+    }
+
+    /**
+     * Test thta the getter/setter for the "use secure" setting works correctly
+     * @covers \Yubikey\Validate::setSecure
+     * @covers \Yubikey\Validate::getSecure
+     */
+    public function testGetSetUseSecure()
+    {
+        $useSecure = true;
+
+        $this->validate->setUseSecure($useSecure);
+        $this->assertEquals($useSecure, $this->validate->getUseSecure());
+    }
+
+    /**
+     * Test that an exception is thrown when the "use secure" valus
+     *     is not boolean
+     * 
+     * @expectedException \InvalidArgumentException
+     * @covers \Yubikey\Validate::setSecure
+     */
+    public function testSetUseSecureInvalid()
+    {
+        $useSecure = 'invalid';
+        $this->validate->setUseSecure($useSecure);
+    }
+
+    /**
+     * Test that the getter/setter for the host works correctly
+     * @covers \Yubikey\Validate::setHost
+     * @covers \Yubikey\Validate::getHost
+     */
+    public function testGetSetHost()
+    {
+        $host = 'test.foo.com';
+
+        $this->validate->setHost($host);
+        $this->assertEquals($this->validate->getHost(), $host);
+    }
+
+    /**
+     * Test that a valid random host is selected if none was previously set
+     * @covers \Yubikey\Validate::getHost
+     */
+    public function testGetRandomHost()
+    {
+        $host1 = $this->validate->getHost();
+        $this->assertNotEquals($host1, null);
+    }
+
+    /**
+     * Test that the signature generation is valid
+     * @covers \Yubikey\Validate::generateSignature
+     */
+    public function testSignatureGenerate()
+    {
+        $data = array('foo' => 'bar');
+        $key = $this->validate->getApiKey();
+        $hash = preg_replace(
+            '/\+/', '%2B', 
+            base64_encode(hash_hmac('sha1', http_build_query($data), $key, true))
+        );
+
+        $signature = $this->validate->generateSignature($data);
+        $this->assertEquals($hash, $signature);
+    }
 }
+
