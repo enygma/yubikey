@@ -66,8 +66,8 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test thta the getter/setter for the "use secure" setting works correctly
-     * @covers \Yubikey\Validate::setSecure
-     * @covers \Yubikey\Validate::getSecure
+     * @covers \Yubikey\Validate::setUseSecure
+     * @covers \Yubikey\Validate::getUseSecure
      */
     public function testGetSetUseSecure()
     {
@@ -82,7 +82,7 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
      *     is not boolean
      * 
      * @expectedException \InvalidArgumentException
-     * @covers \Yubikey\Validate::setSecure
+     * @covers \Yubikey\Validate::setUseSecure
      */
     public function testSetUseSecureInvalid()
     {
