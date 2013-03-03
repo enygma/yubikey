@@ -1,6 +1,8 @@
 Yubikey PHP Library
 =======================
 
+[![Build Status](https://secure.travis-ci.org/enygma/yubikey.png?branch=master)](http://travis-ci.org/enygma/yubikey)
+
 This library lets you easily interface with the Yubico REST API for validating
 the codes created by the Yubikey.
 
