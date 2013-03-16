@@ -25,8 +25,8 @@ Example code:
 $apiKey = 'dGVzdGluZzEyMzQ1Njc4OTA=';
 $clientId = '12345';
 
-$v = new \Yubikey\Validate($apiKey);
-$response = $v->check($inputtedKey, $clientId);
+$v = new \Yubikey\Validate($apiKey, $clientId);
+$response = $v->check($inputtedKey);
 
 echo ($response->success() === true) ? 'success!' : 'you failed. aw.';
 

@@ -252,7 +252,6 @@ class Validate
 
         $request = $client->get($url);
         $response = $request->send();
-        echo $response->getBody(true);
         $response = $this->parseResponse($response->getBody(true));
 
         $response = new Response($response);
