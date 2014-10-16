@@ -59,6 +59,12 @@ class Response
     private $host;
 
     /**
+     * Microtime difference taken to get response
+     * @var integer
+     */
+    private $mt;
+
+    /**
      * Define constants for the return status from API
      */
     const SUCCESS = 'OK';
@@ -119,6 +125,26 @@ class Response
         }
 
         $this->load($result);
+    }
+
+    /**
+     * Get the time value for the response
+     *
+     * @return string Date/time string
+     */
+    public function getTime()
+    {
+        return $this->t;
+    }
+
+    /**
+     * Return the time to execute (microtime)
+     *
+     * @return integer Time result
+     */
+    public function getMt()
+    {
+        return $this->mt;
     }
 
     /**
