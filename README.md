@@ -31,6 +31,31 @@ echo ($response->success() === true) ? 'success!' : 'you failed. aw.';
 ?>
 ```
 
+### HTTP vs HTTPS
+
+By default the library will try to use a `HTTPS` request to the host given. If you need to disable this for some reason
+(like no SSL support), you can use the `setUseSecure` method and set it to false:
+
+```php
+$v = new \Yubikey\Validate($apiKey, $clientId);
+$v->setUseSecure(false);
+```
+
+### Overriding hosts
+
+The library comes with a set of hostnames for the Yubico external API servers (api.yubico.com through api5.yubico.com). If
+you ever have a need to override these, you can use `setHosts`:
+
+```php
+$v = new \Yubikey\Validate($apiKey, $clientId);
+$v->setHosts(array(
+    'api.myhost1.com',
+    'api1.myhost.com'
+));
+```
+Remember, this will *overwrite* the current hosts in the class, so be sure you don't still need those. If you just want to add
+another host, look at the `addHost` method.
+
 ### Multi-Server Requests:
 
 Additonally, the library also supports simultaneous connections to multiple servers. By default it will only make
