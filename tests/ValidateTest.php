@@ -80,7 +80,7 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
     /**
      * Test that an exception is thrown when the "use secure" valus
      *     is not boolean
-     * 
+     *
      * @expectedException \InvalidArgumentException
      * @covers \Yubikey\Validate::setUseSecure
      */
@@ -122,7 +122,7 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
         $data = array('foo' => 'bar');
         $key = $this->validate->getApiKey();
         $hash = preg_replace(
-            '/\+/', '%2B', 
+            '/\+/', '%2B',
             base64_encode(hash_hmac('sha1', http_build_query($data), $key, true))
         );
 
