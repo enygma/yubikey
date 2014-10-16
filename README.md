@@ -33,4 +33,35 @@ echo ($response->success() === true) ? 'success!' : 'you failed. aw.';
 ?>
 ```
 
+Additonally, the library also supports simultaneous connections to multiple servers. By default it will only make
+the request to the first server in the `hosts` list. You can enable the multi-server checking with a second parameter on
+the `check()` method:
+
+```
+<?php
+$v = new \Yubikey\Validate($apiKey, $clientId);
+$response = $v->check($inputtedKey, true);
+
+echo ($response->success() === true) ? 'success!' : 'you failed. aw.';
+?>
+````
+
+This will make multiple requests and return the pass/fail status of the aggregate responses from each. So, if you have all but one
+server pass, the overall response will be a fail. If all return `OK` though, you're in the clear.
+
+Additionally, you can also switch on and off this aggregation of the results and go with only the "first in" response. You do this
+with a flag on the `success` checking method:
+
+```
+<?php
+$v = new \Yubikey\Validate($apiKey, $clientId);
+$response = $v->check($inputtedKey, true);
+
+echo ($response->success(true) === true) ? 'success!' : 'you failed. aw.';
+?>
+````
+
+**NOTE:** This will still work without multi-server checking. The "first in" will just always be the single response.
+
+
 @author Chris Cornutt <ccornutt@phpdeveloper.org>
