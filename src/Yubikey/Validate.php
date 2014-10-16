@@ -52,14 +52,26 @@ class Validate
      */
     private $otp = null;
 
-    public function __construct($apiKey, $clientId)
+    /**
+     * Init the object and set the API key, Client ID and optionally hosts
+     *
+     * @param string $apiKey API Key
+     * @param string $clientId Client ID
+     * @param array $hosts Set of hostnames (overwrites current)
+     */
+    public function __construct($apiKey, $clientId, array $hosts = array())
     {
         $this->setApiKey($apiKey);
         $this->setClientId($clientId);
+
+        if (!empty($hosts)) {
+            $this->setHosts($hosts);
+        }
     }
 
     /**
      * Get the currently set API key
+     *
      * @return string API key
      */
     public function getApiKey()
@@ -69,6 +81,7 @@ class Validate
 
     /**
      * Set the API key
+     *
      * @param string $apiKey API request key
      */
     public function setApiKey($apiKey)
@@ -84,6 +97,7 @@ class Validate
 
     /**
      * Set the OTP for the request
+     *
      * @param string $otp One-time password
      */
     public function setOtp($otp)
@@ -94,6 +108,7 @@ class Validate
 
     /**
      * Get the currently set OTP
+     *
      * @return string One-time password
      */
     public function getOtp()
@@ -103,6 +118,7 @@ class Validate
 
     /**
      * Get the current Client ID
+     *
      * @return integer Client ID
      */
     public function getClientId()
@@ -112,6 +128,7 @@ class Validate
 
     /**
      * Set the current Client ID
+     *
      * @param integer $clientId Client ID
      */
     public function setClientId($clientId)
@@ -122,6 +139,7 @@ class Validate
 
     /**
      * Get the "use secure" setting
+     *
      * @return boolean Use flag
      */
     public function getUseSecure()
@@ -131,6 +149,7 @@ class Validate
 
     /**
      * Set the "use secure" setting
+     *
      * @param boolean $use Use/don't use secure
      * @throws \InvalidArgumentException when value is not boolean
      */
@@ -146,6 +165,7 @@ class Validate
     /**
      * Get the host for the request
      *     If one is not set, it returns a random one from the host set
+     *
      * @return string Hostname string
      */
     public function getHost()
@@ -162,6 +182,7 @@ class Validate
 
     /**
      * Set the API host for the request
+     *
      * @param string $host Hostname
      */
     public function setHost($host)
@@ -171,31 +192,18 @@ class Validate
     }
 
     /**
-     * Get the current client for the request
-     *     If one is not set, tries to make a new Guzzle client
-     * @return object Client object
+     * Set the hosts to request results from
+     *
+     * @param array $hosts Set of hostnames
      */
-    public function getClient()
+    public function setHosts(array $hosts)
     {
-        if ($this->client == null) {
-            $prefix = ($this->getUseSecure() === true) ? 'https' : 'http';
-            $host = $this->getHost();
-            $this->setClient(new \Guzzle\Http\Client($prefix.'://'.$host));
-        }
-        return $this->client;
-    }
-
-    /**
-     * Set the client for the request
-     * @param object $client Client object
-     */
-    public function setClient($client)
-    {   
-        $this->client = $client;
+        $this->hosts = $hosts;
     }
 
     /**
      * Geenrate the signature for the request values
+     *
      * @param array $data Data for request
      * @throws \InvalidArgumentException when API key is invalid
      * @return Hashed request signature (string)
@@ -208,7 +216,7 @@ class Validate
         }
 
         $hash = preg_replace(
-            '/\+/', '%2B', 
+            '/\+/', '%2B',
             base64_encode(hash_hmac('sha1', http_build_query($data), $key, true))
         );
         return $hash;
@@ -216,27 +224,23 @@ class Validate
 
     /**
      * Check the One-time Password with API request
+     *
      * @param string $otp One-time password
      * @param integer $clientId Client ID for API
      * @throws \InvalidArgumentException when OTP length is invalid
      * @return \Yubikey\Response object
      */
-    public function check($otp)
+    public function check($otp, $multi = false)
     {
         $otp = trim($otp);
         if (strlen($otp) < 32 || strlen($otp) > 48) {
             throw new \InvalidArgumentException('Invalid OTP length');
         }
 
-        $client = $this->getClient();
-        if ($client == null) {
-            throw new \InvalidArgumentException('Client cannot be null');
-        }
-
         $clientId = $this->getClientId();
-        if ($client == null) {
+        if ($clientId == null) {
             throw new \InvalidArgumentException('Client ID cannot be null');
-        }        
+        }
 
         $nonce = md5(mt_rand());
         $params = array(
@@ -246,39 +250,26 @@ class Validate
             'timestamp' => '1'
         );
         ksort($params);
+
         $signature = $this->generateSignature($params);
-
         $url = '/wsapi/2.0/verify?'.http_build_query($params).'&h='.$signature;
+        $hosts = ($multi == false) ? array(array_shift($this->hosts)) : $this->hosts;
+        $c = new \Yubikey\Client();
+        $pool = new \Yubikey\RequestCollection();
 
-        $request = $client->get($url);
-        $response = $request->send();
-        $response = $this->parseResponse($response->getBody(true));
+        // Make the requests for the host(s)
+        $prefix = ($this->getUseSecure() === true) ? 'https' : 'http';
+        foreach ($hosts as $host) {
+            $link = $prefix.'://'.$host.$url;
+            $pool->add(new \Yubikey\Request($link));
+        }
+        $responses = $c->send($pool);
 
-        $response = new Response($response);
-        $response->setInputOtp($otp)
-            ->setInputNonce($nonce);
-
-        return $response;
-    }
-
-    /**
-     * Parse the response from the Yubico API
-     * @param string $response Response content 
-     * @return array Data set of parsed response
-     */
-    public function parseResponse($response)
-    {
-        $result = array();
-        $parts = explode("\n", $response);
-
-        foreach($parts as $index => $part) {
-            $kv = explode("=", $part);
-            if (!empty($kv[1])) {
-                $result[$kv[0]] = $kv[1];
-            }
+        for ($i = 0; $i < count($responses); $i++) {
+            $responses[$i]->setInputOtp($otp)->setInputNonce($nonce);
         }
 
-        return $result;
+        return $responses;
     }
 }
 
