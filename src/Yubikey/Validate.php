@@ -181,13 +181,13 @@ class Validate
     }
 
     /**
-     * Set the API host for the request
+     * Add a new hostname to the list
      *
      * @param string $host Hostname
      */
-    public function setHost($host)
+    public function addHost($host)
     {
-        $this->host = $host;
+        $this->hosts[] = $host;
         return $this;
     }
 
