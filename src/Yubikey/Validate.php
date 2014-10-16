@@ -181,9 +181,20 @@ class Validate
     }
 
     /**
-     * Add a new hostname to the list
+     * Set the API host for the request
      *
      * @param string $host Hostname
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
+        return $this;
+    }
+
+    /**
+     * Add a new host to the list
+     *
+     * @param string $host Hostname to add
      */
     public function addHost($host)
     {
