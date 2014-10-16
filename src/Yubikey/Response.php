@@ -53,6 +53,12 @@ class Response
     private $inputNonce = null;
 
     /**
+     * Hostname request was made to
+     * @var string
+     */
+    private $host;
+
+    /**
      * Define constants for the return status from API
      */
     const SUCCESS = 'OK';
@@ -68,7 +74,7 @@ class Response
 
     /**
      * Init the object and set the data into the response
-     * 
+     *
      * @param array $data Data from the Yubi API response
      */
     public function __construct($data = null)
@@ -80,7 +86,7 @@ class Response
 
     /**
      * Load the data into the object
-     * 
+     *
      * @param array $data Data from the object
      * @return boolean True when loading is done
      */
@@ -95,12 +101,33 @@ class Response
     }
 
     /**
+     * Parse the return data from the request and
+     *     load it into the object properties
+     *
+     * @param string $data API return data
+     */
+    public function parse($data)
+    {
+        $result = array();
+        $parts = explode("\n", $data);
+
+        foreach($parts as $index => $part) {
+            $kv = explode("=", $part);
+            if (!empty($kv[1])) {
+                $result[$kv[0]] = $kv[1];
+            }
+        }
+
+        $this->load($result);
+    }
+
+    /**
      * Set the OTP used in the request
      * @param string $otp OTP string (from key)
      */
     public function setInputOtp($otp)
     {
-        $this->userOtp = $otp;
+        $this->inputOtp = $otp;
         return $this;
     }
 
@@ -110,7 +137,7 @@ class Response
      */
     public function getInputOtp()
     {
-        return $this->userOtp;
+        return $this->inputOtp;
     }
 
     /**
@@ -130,6 +157,25 @@ class Response
     public function getInputNonce()
     {
         return $this->inputNonce;
+    }
+
+    /**
+     * Set response hostname
+     * @param string $host Hostname
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
+        return $this;
+    }
+
+    /**
+     * Get the current hostname
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->host;
     }
 
     /**
