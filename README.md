@@ -19,9 +19,8 @@ Look at the `test.php` example script to see how to use it. This can be executed
 
 Example code:
 
-```
+```php
 <?php
-
 $apiKey = 'dGVzdGluZzEyMzQ1Njc4OTA=';
 $clientId = '12345';
 
@@ -29,15 +28,16 @@ $v = new \Yubikey\Validate($apiKey, $clientId);
 $response = $v->check($inputtedKey);
 
 echo ($response->success() === true) ? 'success!' : 'you failed. aw.';
-
 ?>
 ```
+
+### Multi-Server Requests:
 
 Additonally, the library also supports simultaneous connections to multiple servers. By default it will only make
 the request to the first server in the `hosts` list. You can enable the multi-server checking with a second parameter on
 the `check()` method:
 
-```
+```php
 <?php
 $v = new \Yubikey\Validate($apiKey, $clientId);
 $response = $v->check($inputtedKey, true);
@@ -49,10 +49,12 @@ echo ($response->success() === true) ? 'success!' : 'you failed. aw.';
 This will make multiple requests and return the pass/fail status of the aggregate responses from each. So, if you have all but one
 server pass, the overall response will be a fail. If all return `OK` though, you're in the clear.
 
+### "First in" result
+
 Additionally, you can also switch on and off this aggregation of the results and go with only the "first in" response. You do this
 with a flag on the `success` checking method:
 
-```
+```php
 <?php
 $v = new \Yubikey\Validate($apiKey, $clientId);
 $response = $v->check($inputtedKey, true);
