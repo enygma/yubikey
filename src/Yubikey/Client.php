@@ -23,6 +23,7 @@ class Client
             'response' => null,
             'host' => null
         );
+        $mt = microtime(true);
 
         // this should be a collection too
         $responses = new \Yubikey\ResponseCollection();
@@ -45,9 +46,9 @@ class Client
                     $cinfo = curl_getinfo($info['handle']);
                     $url = parse_url($cinfo['url']);
 
-                    // echo 'content: '.$return."\n";
                     $response = new \Yubikey\Response(array(
-                        'host' => $url['host']
+                        'host' => $url['host'],
+                        'mt' => (microtime(true)-$mt)
                     ));
                     $response->parse($return);
                     $responses->add($response);
