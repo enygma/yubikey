@@ -23,7 +23,7 @@ class Client
             'response' => null,
             'host' => null
         );
-        $mt = microtime(true);
+        $startTime = microtime(true);
 
         // this should be a collection too
         $responses = new \Yubikey\ResponseCollection();
@@ -48,7 +48,7 @@ class Client
 
                     $response = new \Yubikey\Response(array(
                         'host' => $url['host'],
-                        'mt' => (microtime(true)-$mt)
+                        'mt' => (microtime(true)-$startTime)
                     ));
                     $response->parse($return);
                     $responses->add($response);
