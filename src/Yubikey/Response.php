@@ -235,5 +235,3 @@ class Response
         ) ? true : false;
     }
 }
-
-?>
