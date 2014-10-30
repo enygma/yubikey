@@ -275,7 +275,22 @@ class Validate
         $signature = $this->generateSignature($params);
         $url = '/wsapi/2.0/verify?'.http_build_query($params).'&h='.$signature;
         $hosts = ($multi == false) ? array(array_shift($this->hosts)) : $this->hosts;
-        $c = new \Yubikey\Client();
+
+        return $this->request($url, $hosts, $otp, $nonce);
+    }
+
+    /**
+     * Make the request(s) to the Yubi server(s)
+     *
+     * @param string $url URL for request
+     * @param array $hosts Set of hosts to request
+     * @param string $otp One-time password string
+     * @param string $nonce Generated nonce
+     * @return array Set of responses
+     */
+    public function request($url, array $hosts, $otp, $nonce)
+    {
+        $client = new \Yubikey\Client();
         $pool = new \Yubikey\RequestCollection();
 
         // Make the requests for the host(s)
@@ -284,7 +299,7 @@ class Validate
             $link = $prefix.'://'.$host.$url;
             $pool->add(new \Yubikey\Request($link));
         }
-        $responses = $c->send($pool);
+        $responses = $client->send($pool);
 
         for ($i = 0; $i < count($responses); $i++) {
             $responses[$i]->setInputOtp($otp)->setInputNonce($nonce);
