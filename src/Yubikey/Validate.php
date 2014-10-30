@@ -181,6 +181,16 @@ class Validate
     }
 
     /**
+     * Get the current hosts list
+     *
+     * @return array Hosts list
+     */
+    public function getHosts()
+    {
+        return $this->hosts;
+    }
+
+    /**
      * Set the API host for the request
      *
      * @param string $host Hostname
@@ -222,7 +232,7 @@ class Validate
     public function generateSignature($data)
     {
         $key = $this->getApiKey();
-        if ($key === null) {
+        if ($key === null || empty($key)) {
             throw new \InvalidArgumentException('Invalid API key!');
         }
 
