@@ -293,5 +293,3 @@ class Validate
         return $responses;
     }
 }
-
-?>
