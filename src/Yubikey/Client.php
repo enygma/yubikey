@@ -17,16 +17,27 @@ class Client
             $requests = new \Yubikey\RequestCollection($requests);
         }
 
-        $multi = curl_multi_init();
-        $curls = array();
         $content = array(
             'response' => null,
             'host' => null
         );
-        $startTime = microtime(true);
+        $responses = $this->request($requests, $content);
+        return $responses;
+    }
 
-        // this should be a collection too
+    /**
+     * Make the request given the Request set and content
+     *
+     * @param \Yubikey\RequestCollection $requests Request collection
+     * @param array $content Content data for request
+     * @return \Yubikey\ResponseCollection instance
+     */
+    public function request(\Yubikey\RequestCollection $requests, array $content)
+    {
         $responses = new \Yubikey\ResponseCollection();
+        $startTime = microtime(true);
+        $multi = curl_multi_init();
+        $curls = array();
 
         foreach ($requests as $index => $request) {
             $curls[$index] = curl_init();
