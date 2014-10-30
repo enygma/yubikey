@@ -129,5 +129,51 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
         $signature = $this->validate->generateSignature($data);
         $this->assertEquals($hash, $signature);
     }
+
+    /**
+     * Test that an exception is thrown when the API is invalid (null or empty)
+     * @covers \Yubikey\Validate::generateSignature
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSignatureGenerateNoApiKey()
+    {
+        $key = null;
+        $data = array('foo' => 'bar');
+        $validate = new \Yubikey\Validate($key, $this->clientId);
+        $hash = preg_replace(
+            '/\+/', '%2B',
+            base64_encode(hash_hmac('sha1', http_build_query($data), $key, true))
+        );
+
+        $signature = $validate->generateSignature($data);
+    }
+
+    /**
+     * Add a new Host to the list
+     * @covers \Yubikey\Validate::addHost
+     */
+    public function testAddNewHost()
+    {
+        $this->validate->addHost('test.com');
+        $this->assertTrue(
+            in_array('test.com', $this->validate->getHosts())
+        );
+    }
+
+    /**
+     * Set the new Hosts list (override)
+     * @covers \Yubikey\Validate::setHosts
+     * @covers \Yubikey\Validate::getHosts
+     */
+    public function testSetHosts()
+    {
+        $hosts = array('foo.com');
+        $this->validate->setHosts($hosts);
+
+        $this->assertEquals(
+            $this->validate->getHosts(),
+            $hosts
+        );
+    }
 }
 
