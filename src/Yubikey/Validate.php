@@ -274,7 +274,7 @@ class Validate
 
         $signature = $this->generateSignature($params);
         $url = '/wsapi/2.0/verify?'.http_build_query($params).'&h='.$signature;
-        $hosts = ($multi == false) ? array(array_shift($this->hosts)) : $this->hosts;
+        $hosts = ($multi === false) ? array(array_shift($this->hosts)) : $this->hosts;
 
         return $this->request($url, $hosts, $otp, $nonce);
     }
