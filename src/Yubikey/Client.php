@@ -17,11 +17,7 @@ class Client
             $requests = new \Yubikey\RequestCollection($requests);
         }
 
-        $content = array(
-            'response' => null,
-            'host' => null
-        );
-        $responses = $this->request($requests, $content);
+        $responses = $this->request($requests);
         return $responses;
     }
 
@@ -29,10 +25,9 @@ class Client
      * Make the request given the Request set and content
      *
      * @param \Yubikey\RequestCollection $requests Request collection
-     * @param array $content Content data for request
      * @return \Yubikey\ResponseCollection instance
      */
-    public function request(\Yubikey\RequestCollection $requests, array $content)
+    public function request(\Yubikey\RequestCollection $requests)
     {
         $responses = new \Yubikey\ResponseCollection();
         $startTime = microtime(true);
