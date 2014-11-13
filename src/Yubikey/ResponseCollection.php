@@ -38,7 +38,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      */
     public function success($first = false)
     {
-        $success = true;
+        $success = false;
         if ($first === true) {
             // Sort them by timestamp, pop the first one and return pass/fail
             usort($this->responses, function($r1, $r2) {
@@ -50,6 +50,8 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
             foreach ($this->responses as $response) {
                 if ($response->success() === false) {
                     return false;
+                } else {
+                    $success = true;
                 }
             }
         }
