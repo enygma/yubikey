@@ -52,6 +52,12 @@ class Response
      */
     private $inputNonce = null;
 
+    private $timestamp = null;
+
+    private $sessioncounter = null;
+
+    private $sessionuse = null;
+
     /**
      * Hostname request was made to
      * @var string
@@ -202,6 +208,37 @@ class Response
     public function getHost()
     {
         return $this->host;
+    }
+
+    /**
+     * Get the hash from the response
+     *
+     * @param boolean $encode "Encode" the data (replace + with %2B)
+     * @return string Hash value
+     */
+    public function getHash($encode = false)
+    {
+        $hash = $this->h;
+        if (substr($hash, -1) !== '=') {
+            $hash .= '=';
+        }
+        if ($encode === true) {
+            $hash = str_replace('+', '%2B', $hash);
+        }
+        return $hash;
+    }
+
+    /**
+     * Get the properties of the response
+     *
+     * @return array Response property list
+     */
+    public function getProperties()
+    {
+        return array(
+            't', 'otp', 'nonce', 'sl', 'status',
+            'timestamp', 'sessioncounter', 'sessionuse'
+        );
     }
 
     /**

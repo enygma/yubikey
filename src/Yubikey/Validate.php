@@ -52,6 +52,10 @@ class Validate
      */
     private $otp = null;
 
+    private $returnTypes = array(
+        't', 'otp', 'nonce', 'sl', 'timestamp', 'sessioncounter', 'sessionuse', 'status'
+    );
+
     /**
      * Init the object and set the API key, Client ID and optionally hosts
      *
@@ -74,9 +78,9 @@ class Validate
      *
      * @return string API key
      */
-    public function getApiKey()
+    public function getApiKey($decoded = false)
     {
-        return $this->apiKey;
+        return ($decoded === false) ? $this->apiKey : base64_decode($this->apiKey);
     }
 
     /**
@@ -229,16 +233,22 @@ class Validate
      * @throws \InvalidArgumentException when API key is invalid
      * @return Hashed request signature (string)
      */
-    public function generateSignature($data)
+    public function generateSignature($data, $key = null)
     {
-        $key = $this->getApiKey();
-        if ($key === null || empty($key)) {
-            throw new \InvalidArgumentException('Invalid API key!');
+        if ($key === null) {
+            $key = $this->getApiKey();
+            if ($key === null || empty($key)) {
+                throw new \InvalidArgumentException('Invalid API key!');
+            }
         }
+
+        $query = http_build_query($data);
+        $query = utf8_encode(str_replace('%3A', ':', $query));
 
         $hash = preg_replace(
             '/\+/', '%2B',
-            base64_encode(hash_hmac('sha1', http_build_query($data), $key, true))
+            // base64_encode(hash_hmac('sha1', http_build_query($data), $key, true))
+            base64_encode(hash_hmac('sha1', $query, $key, true))
         );
         return $hash;
     }
@@ -303,6 +313,22 @@ class Validate
 
         for ($i = 0; $i < count($responses); $i++) {
             $responses[$i]->setInputOtp($otp)->setInputNonce($nonce);
+
+            // Check the response signature - if !==, remove from set
+            $response = $responses[$i];
+            $params = array();
+            foreach ($response->getProperties() as $property) {
+                $value = $response->$property;
+                if (!empty($value)) {
+                    $params[$property] = $value;
+                }
+            }
+            ksort($params);
+
+            $signature = $this->generateSignature($params);
+            if ($signature !== $responses[$i]->getHash(true)) {
+                unset($responses[$i]);
+            }
         }
 
         return $responses;
