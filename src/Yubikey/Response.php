@@ -52,10 +52,22 @@ class Response
      */
     private $inputNonce = null;
 
+    /**
+     * Timestamp returned from the response
+     * @var string
+     */
     private $timestamp = null;
 
+    /**
+     * Session counter
+     * @var integer
+     */
     private $sessioncounter = null;
 
+    /**
+     * Session use #
+     * @var integer
+     */
     private $sessionuse = null;
 
     /**
