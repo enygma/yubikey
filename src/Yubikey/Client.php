@@ -1,6 +1,4 @@
 <?php
-//http://www.onlineaspect.com/2009/01/26/how-to-use-curl_multi-without-blocking/
-
 namespace Yubikey;
 
 class Client
