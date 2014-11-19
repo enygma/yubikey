@@ -66,15 +66,30 @@ class Validate
      * @param string $apiKey API Key
      * @param string $clientId Client ID
      * @param array $hosts Set of hostnames (overwrites current)
+     * @throws \DomainException If curl is not enabled
      */
     public function __construct($apiKey, $clientId, array $hosts = array())
     {
+        if ($this->checkCurlSupport() === false) {
+            throw new \DomainException('cURL support is required and is not enabled!');
+        }
+
         $this->setApiKey($apiKey);
         $this->setClientId($clientId);
 
         if (!empty($hosts)) {
             $this->setHosts($hosts);
         }
+    }
+
+    /**
+     * Check for enabled curl support (requirement)
+     *
+     * @return boolean Enabled/not found flag
+     */
+    public function checkCurlSupport()
+    {
+        return (function_exists('curl_init'));
     }
 
     /**
