@@ -292,7 +292,7 @@ class Validate
             throw new \InvalidArgumentException('Client ID cannot be null');
         }
 
-        $nonce = md5(mt_rand());
+        $nonce = $this->generateNonce();
         $params = array(
             'id' => $clientId,
             'otp' => trim($otp),
@@ -306,6 +306,22 @@ class Validate
         $hosts = ($multi === false) ? array(array_shift($this->hosts)) : $this->hosts;
 
         return $this->request($url, $hosts, $otp, $nonce);
+    }
+
+    /**
+     * Generate a good nonce for the request
+     *
+     * @return string Generated hash
+     */
+    public function generateNonce()
+    {
+        $hash = '';
+        if (function_exists('openssl_random_pseudo_bytes') === true) {
+            $hash = md5(openssl_random_pseudo_bytes(32));
+        } else {
+            $hash = md5(uniqid(mt_rand()));
+        }
+        return $hash;
     }
 
     /**
