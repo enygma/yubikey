@@ -300,9 +300,9 @@ class Validate
             'timestamp' => '1'
         );
         ksort($params);
+        $params['h'] = $this->generateSignature($params);
 
-        $signature = $this->generateSignature($params);
-        $url = '/wsapi/2.0/verify?'.http_build_query($params).'&h='.$signature;
+        $url = '/wsapi/2.0/verify?'.http_build_query($params);
         $hosts = ($multi === false) ? array(array_shift($this->hosts)) : $this->hosts;
 
         return $this->request($url, $hosts, $otp, $nonce);
