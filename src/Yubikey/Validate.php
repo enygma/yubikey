@@ -374,6 +374,25 @@ class Validate
         ksort($params);
 
         $signature = $this->generateSignature($params);
-        return ($signature == $response->getHash(true));
+        return $this->hash_equals($signature, $response->getHash(true));
+    }
+    
+    /**
+     * Polyfill PHP 5.6.0's hash_equals() feature
+     */
+    public function hash_equals($a, $b)
+    {
+        if (\function_exists('hash_equals')) {
+            return \hash_equals($a, $b);
+        }
+        if (\strlen($a) !== \strlen($b)) {
+            return false;
+        }
+        $res = 0;
+        $len = \strlen($a);
+        for ($i = 0; $i < $len; ++$i) {
+            $res |= \ord($a[$i]) ^ \ord($b[$i]);
+        }
+        return $res === 0;
     }
 }
