@@ -50,9 +50,6 @@ class Client
                     $cinfo = curl_getinfo($info['handle']);
                     $url = parse_url($cinfo['url']);
 
-echo 'URL: '.$request->getUrl()."\n\n";
-echo 'RETURN: '."\n".$return."\n\n";
-
                     $response = new \Yubikey\Response(array(
                         'host' => $url['host'],
                         'mt' => (microtime(true)-$startTime)
