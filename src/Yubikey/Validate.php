@@ -367,7 +367,7 @@ class Validate
         $params = array();
         foreach ($response->getProperties() as $property) {
             $value = $response->$property;
-            if (!empty($value)) {
+            if ($value !== null) {
                 $params[$property] = $value;
             }
         }
