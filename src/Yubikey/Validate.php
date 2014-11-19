@@ -52,6 +52,10 @@ class Validate
      */
     private $otp = null;
 
+    /**
+     * The properties list available in the response
+     * @var array
+     */
     private $returnTypes = array(
         't', 'otp', 'nonce', 'sl', 'timestamp', 'sessioncounter', 'sessionuse', 'status'
     );
@@ -314,23 +318,32 @@ class Validate
         for ($i = 0; $i < count($responses); $i++) {
             $responses[$i]->setInputOtp($otp)->setInputNonce($nonce);
 
-            // Check the response signature - if !==, remove from set
-            $response = $responses[$i];
-            $params = array();
-            foreach ($response->getProperties() as $property) {
-                $value = $response->$property;
-                if (!empty($value)) {
-                    $params[$property] = $value;
-                }
-            }
-            ksort($params);
-
-            $signature = $this->generateSignature($params);
-            if ($signature !== $responses[$i]->getHash(true)) {
+            if ($this->validateResponseSignature($responses[$i]) === false) {
                 unset($responses[$i]);
             }
         }
 
         return $responses;
+    }
+
+    /**
+     * Validate the signature on the response
+     *
+     * @param  \Yubikey\Response $response Response instance
+     * @return boolean Pass/fail status of signature validation
+     */
+    public function validateResponseSignature(\Yubikey\Response $response)
+    {
+        $params = array();
+        foreach ($response->getProperties() as $property) {
+            $value = $response->$property;
+            if (!empty($value)) {
+                $params[$property] = $value;
+            }
+        }
+        ksort($params);
+
+        $signature = $this->generateSignature($params);
+        return ($signature == $response->getHash(true));
     }
 }
