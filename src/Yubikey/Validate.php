@@ -315,7 +315,6 @@ class Validate
      */
     public function generateNonce()
     {
-        $hash = '';
         if (function_exists('openssl_random_pseudo_bytes') === true) {
             $hash = md5(openssl_random_pseudo_bytes(32));
         } else {
