@@ -300,9 +300,8 @@ class Validate
             'timestamp' => '1'
         );
         ksort($params);
-        $params['h'] = $this->generateSignature($params);
 
-        $url = '/wsapi/2.0/verify?'.http_build_query($params);
+        $url = '/wsapi/2.0/verify?'.http_build_query($params).'&h='.$this->generateSignature($params);
         $hosts = ($multi === false) ? array(array_shift($this->hosts)) : $this->hosts;
 
         return $this->request($url, $hosts, $otp, $nonce);
@@ -376,7 +375,7 @@ class Validate
         $signature = $this->generateSignature($params);
         return $this->hash_equals($signature, $response->getHash(true));
     }
-    
+
     /**
      * Polyfill PHP 5.6.0's hash_equals() feature
      */
