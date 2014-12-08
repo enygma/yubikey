@@ -273,7 +273,7 @@ class Response
         $inputOtp = $this->getInputOtp();
         $inputNonce = $this->getInputNonce();
 
-        if ($inputNonce === null || $inputOtp == null) {
+        if ($inputNonce === null || $inputOtp === null) {
             return false;
         }
 
