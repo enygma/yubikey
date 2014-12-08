@@ -41,7 +41,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
         $success = false;
         if ($first === true) {
             // Sort them by timestamp, pop the first one and return pass/fail
-            usort($this->responses, function($r1, $r2) {
+            usort($this->responses, function(\Yubikey\Response $r1, \Yubikey\Response $r2) {
                 return $r1->getMt() > $r2->getMt();
             });
             $response = $this->responses[0];
