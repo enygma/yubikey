@@ -43,7 +43,7 @@ class Client
         }
 
         do {
-            while (($mrc = curl_multi_exec($multi, $active)) == CURLM_CALL_MULTI_PERFORM);
+            while ((curl_multi_exec($multi, $active)) == CURLM_CALL_MULTI_PERFORM);
             while ($info = curl_multi_info_read($multi)) {
                 if ($info['result'] == CURLE_OK) {
                     $return = curl_multi_getcontent($info['handle']);
