@@ -29,36 +29,16 @@ class Validate
     private $apiKey = null;
 
     /**
-     * HTTP client for request
-     * @var object
-     */
-    private $client = null;
-
-    /**
      * Use a secure/insecure connection (HTTPS vs HTTP)
      * @var boolean
      */
     private $useSecure = true;
 
     /**
-     * Sync level for request
-     * @var integer
-     */
-    private $syncLevel = 0;
-
-    /**
      * OTP provided by user
      * @var string
      */
     private $otp = null;
-
-    /**
-     * The properties list available in the response
-     * @var array
-     */
-    private $returnTypes = array(
-        't', 'otp', 'nonce', 'sl', 'timestamp', 'sessioncounter', 'sessionuse', 'status'
-    );
 
     /**
      * Init the object and set the API key, Client ID and optionally hosts
@@ -288,7 +268,7 @@ class Validate
         }
 
         $clientId = $this->getClientId();
-        if ($clientId == null) {
+        if ($clientId === null) {
             throw new \InvalidArgumentException('Client ID cannot be null');
         }
 
@@ -343,8 +323,9 @@ class Validate
             $pool->add(new \Yubikey\Request($link));
         }
         $responses = $client->send($pool);
+        $repsonseCount = count($responses);
 
-        for ($i = 0; $i < count($responses); $i++) {
+        for ($i = 0; $i < $responseCount; $i++) {
             $responses[$i]->setInputOtp($otp)->setInputNonce($nonce);
 
             if ($this->validateResponseSignature($responses[$i]) === false) {
