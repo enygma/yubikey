@@ -323,7 +323,7 @@ class Validate
             $pool->add(new \Yubikey\Request($link));
         }
         $responses = $client->send($pool);
-        $repsonseCount = count($responses);
+        $responseCount = count($responses);
 
         for ($i = 0; $i < $responseCount; $i++) {
             $responses[$i]->setInputOtp($otp)->setInputNonce($nonce);
