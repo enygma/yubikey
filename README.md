@@ -4,6 +4,7 @@ Yubikey PHP Library
 [![Travis-CI Build Status](https://secure.travis-ci.org/enygma/yubikey.png?branch=master)](http://travis-ci.org/enygma/yubikey)
 [![Codacy Badge](https://www.codacy.com/project/badge/6b73c56a21734a6d93dae6019f733c5e)](https://www.codacy.com)
 [![Code Climate](https://codeclimate.com/github/enygma/yubikey/badges/gpa.svg)](https://codeclimate.com/github/enygma/yubikey)
+[![Total Downloads](https://img.shields.io/packagist/dt/enygma/yubikey.svg?style=flat-square)](https://packagist.org/packages/enygma/yubikey)
 
 This library lets you easily interface with the Yubico REST API for validating
 the codes created by the Yubikey.
