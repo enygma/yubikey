@@ -275,7 +275,7 @@ class Validate
         $nonce = $this->generateNonce();
         $params = array(
             'id' => $clientId,
-            'otp' => trim($otp),
+            'otp' => $otp,
             'nonce' => $nonce,
             'timestamp' => '1'
         );
