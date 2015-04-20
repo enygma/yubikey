@@ -87,7 +87,7 @@ class Response
      */
     const SUCCESS = 'OK';
     const REPLAY_OTP = 'REPLAYED_OTP';
-    const REPLAY_REQUEST = 'REPLAY_REQUEST';
+    const REPLAY_REQUEST = 'REPLAYED_REQUEST';
     const MISSING_PARAMETER = 'MISSING_PARAMETER';
     const NO_CLIENT = 'NO_SUCH_CLIENT';
     const BAD_OTP = 'BAD_OTP';
