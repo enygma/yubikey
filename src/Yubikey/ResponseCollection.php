@@ -48,9 +48,10 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
             return $response->success();
         } else {
             foreach ($this->responses as $response) {
-                if ($response->success() === false) {
+                if ($response->success() === false
+                    && $response->status !== Response::REPLAY_REQUEST) {
                     return false;
-                } else {
+                } elseif ($response->success()) {
                     $success = true;
                 }
             }
