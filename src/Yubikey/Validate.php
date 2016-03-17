@@ -48,7 +48,7 @@ class Validate
      * @param array $hosts Set of hostnames (overwrites current)
      * @throws \DomainException If curl is not enabled
      */
-    public function __construct($apiKey, $clientId, array $hosts = array())
+    public function __construct($apiKey = null, $clientId = null, array $hosts = array())
     {
         if ($this->checkCurlSupport() === false) {
             throw new \DomainException('cURL support is required and is not enabled!');
@@ -269,7 +269,9 @@ class Validate
 
         $clientId = $this->getClientId();
         if ($clientId === null) {
-            throw new \InvalidArgumentException('Client ID cannot be null');
+            if (!$this->getUseSecure())
+                throw new \InvalidArgumentException('Client ID cannot be null');
+            $clientId = 1;
         }
 
         $nonce = $this->generateNonce();
@@ -281,7 +283,11 @@ class Validate
         );
         ksort($params);
 
-        $url = '/wsapi/2.0/verify?'.http_build_query($params).'&h='.$this->generateSignature($params);
+        if (!$this->getUseSecure()){
+            $url = '/wsapi/2.0/verify?'.http_build_query($params).'&h='.$this->generateSignature($params);
+        }else{
+            $url = '/wsapi/2.0/verify?'.http_build_query($params);
+        }
         $hosts = ($multi === false) ? array(array_shift($this->hosts)) : $this->hosts;
 
         return $this->request($url, $hosts, $otp, $nonce);
@@ -328,8 +334,9 @@ class Validate
         for ($i = 0; $i < $responseCount; $i++) {
             $responses[$i]->setInputOtp($otp)->setInputNonce($nonce);
 
-            if ($this->validateResponseSignature($responses[$i]) === false) {
-                unset($responses[$i]);
+            if ($this->getApiKey() and $this->getClientId())
+                if ($this->validateResponseSignature($responses[$i]) === false) {
+                    unset($responses[$i]);
             }
         }
 
