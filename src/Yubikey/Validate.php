@@ -269,9 +269,10 @@ class Validate
 
         $clientId = $this->getClientId();
         if ($clientId === null) {
-            if (!$this->getUseSecure())
+            if (!$this->getUseSecure()){
                 throw new \InvalidArgumentException('Client ID cannot be null');
-            $clientId = 1;
+            }
+            $clientId = rand(1,9999);
         }
 
         $nonce = $this->generateNonce();
@@ -334,9 +335,10 @@ class Validate
         for ($i = 0; $i < $responseCount; $i++) {
             $responses[$i]->setInputOtp($otp)->setInputNonce($nonce);
 
-            if ($this->getApiKey() and $this->getClientId())
+            if ($this->getApiKey() and $this->getClientId()){
                 if ($this->validateResponseSignature($responses[$i]) === false) {
                     unset($responses[$i]);
+                }
             }
         }
 
