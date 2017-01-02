@@ -390,7 +390,7 @@ class Validate
      */
     public function setYubikeyId()
     {
-        $this->yubikeyid = substr($this->getOtp(), 0, 12);
+        $this->yubikeyid = substr_replace($this->getOtp(), '', -32);
         return $this;
     }
 
@@ -404,7 +404,7 @@ class Validate
     public function getYubikeyId($otp = '')
     {
       if (!empty($otp)) {
-        return substr($otp, 0, 12);
+        return substr_replace($this->getOtp(), '', -32);
       }
 
       return $this->yubikeyid;
