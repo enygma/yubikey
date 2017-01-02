@@ -404,7 +404,7 @@ class Validate
     public function getYubikeyId($otp = '')
     {
       if (!empty($otp)) {
-        return substr_replace($this->getOtp(), '', -32);
+        return substr_replace($otp, '', -32);
       }
 
       return $this->yubikeyid;
