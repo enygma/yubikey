@@ -41,6 +41,12 @@ class Validate
     private $otp = null;
 
     /**
+     * Yubikey ID, to identify a connected user
+     * @var string
+     */
+    private $yubikeyid = null;
+
+    /**
      * Init the object and set the API key, Client ID and optionally hosts
      *
      * @param string $apiKey API Key
@@ -267,6 +273,9 @@ class Validate
             throw new \InvalidArgumentException('Invalid OTP length');
         }
 
+        $this->setOtp($otp);
+        $this->setYubikeyId();
+
         $clientId = $this->getClientId();
         if ($clientId === null) {
             throw new \InvalidArgumentException('Client ID cannot be null');
@@ -374,5 +383,30 @@ class Validate
             $res |= \ord($a[$i]) ^ \ord($b[$i]);
         }
         return $res === 0;
+    }
+
+    /**
+     * Extract the yubikey ID from the OTP
+     */
+    public function setYubikeyId()
+    {
+        $this->yubikeyid = substr($this->getOtp(), 0, -32);
+        return $this;
+    }
+
+    /**
+     * Get the yubikey ID from the OTP
+     *
+     * @param string Optional OTP to extract the ID from
+     *
+     * @return string Yubikey ID string
+     */
+    public function getYubikeyId($otp = '')
+    {
+      if (!empty($otp)) {
+        return substr($otp, 0, -32);
+      }
+
+      return $this->yubikeyid;
     }
 }
