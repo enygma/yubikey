@@ -20,8 +20,8 @@
 	"codeclimate/php-test-reporter": "dev-master"
     },
     "autoload":{
-        "psr-0":{
-            "Yubikey":"src/"
+        "psr-4":{
+            "Yubikey\\":"src/Yubikey"
         }
     }
 }
