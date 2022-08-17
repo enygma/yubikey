@@ -1,16 +1,18 @@
 <?php
 
-class ValidateTest extends \PHPUnit_Framework_TestCase
+use Yubikey\Validate;
+
+class ValidateTest extends \PHPUnit\Framework\TestCase
 {
-    private $validate = null;
+    private ?Validate $validate = null;
 
-    private $apiKey = 'dGVzdGluZzEyMzQ1Njc4OTA=';
+    private string $apiKey = 'dGVzdGluZzEyMzQ1Njc4OTA=';
 
-    private $clientId = 12345;
+    private int $clientId = 12345;
 
-    public function setUp()
+    public function setUp(): void
     {
-        $this->validate = new \Yubikey\Validate($this->apiKey, $this->clientId);
+        $this->validate = new Validate($this->apiKey, $this->clientId);
     }
 
     /**
@@ -30,10 +32,10 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the setting of a non-base64 encoded API key
      * @covers \Yubikey\Validate::setApiKey
-     * @expectedException \InvalidArgumentException
      */
     public function testSetInvalidApiKey()
     {
+        $this->expectException(InvalidArgumentException::class);
         $key = 'testing1234^%$#^#';
         $this->validate->setApiKey($key);
     }
@@ -65,7 +67,7 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test thta the getter/setter for the "use secure" setting works correctly
+     * Test that the getter/setter for the "use secure" setting works correctly
      * @covers \Yubikey\Validate::setUseSecure
      * @covers \Yubikey\Validate::getUseSecure
      */
@@ -78,14 +80,14 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that an exception is thrown when the "use secure" valus
+     * Test that an exception is thrown when the "use secure" values
      *     is not boolean
      *
-     * @expectedException \InvalidArgumentException
      * @covers \Yubikey\Validate::setUseSecure
      */
     public function testSetUseSecureInvalid()
     {
+        $this->expectException(InvalidArgumentException::class);
         $useSecure = 'invalid';
         $this->validate->setUseSecure($useSecure);
     }
@@ -133,13 +135,13 @@ class ValidateTest extends \PHPUnit_Framework_TestCase
     /**
      * Test that an exception is thrown when the API is invalid (null or empty)
      * @covers \Yubikey\Validate::generateSignature
-     * @expectedException \InvalidArgumentException
      */
     public function testSignatureGenerateNoApiKey()
     {
+        $this->expectException(InvalidArgumentException::class);
         $key = null;
         $data = array('foo' => 'bar');
-        $validate = new \Yubikey\Validate($key, $this->clientId);
+        $validate = new Validate($key, $this->clientId);
         $hash = preg_replace(
             '/\+/', '%2B',
             base64_encode(hash_hmac('sha1', http_build_query($data), $key, true))
