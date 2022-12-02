@@ -74,6 +74,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      *
      * @return integer Count of current Requests
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->responses);
@@ -84,6 +85,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      *
      * @return Current Request object
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->responses[$this->position];
@@ -94,6 +96,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      *
      * @return integer Current position in set
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -104,6 +107,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      *
      * @return integer Next positiion in set
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         return ++$this->position;
@@ -112,6 +116,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
     /**
      * For Iterator, rewind set location to beginning
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->position = 0;
@@ -122,6 +127,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      *
      * @return boolean Valid/invalid result
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return isset($this->responses[$this->position]);
@@ -133,6 +139,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      * @param mixed $offset Offset identifier
      * @return boolean Found/not found result
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return (isset($this->responses[$offset]));
@@ -144,6 +151,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      * @param mixed $offset Offset to locate
      * @return \Yubikey\Request object if found
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->responses[$offset];
@@ -155,6 +163,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      * @param mixed $offset Offset to use in data set
      * @param mixed $data Data to assign
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $data)
     {
         $this->responses[$offset] = $data;
@@ -165,6 +174,7 @@ class ResponseCollection implements \Countable, \Iterator, \ArrayAccess
      *
      * @param mixed $offset Offset to remove
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->responses[$offset]);
