@@ -2,7 +2,12 @@
 
 use Yubikey\Validate;
 
-class ValidateTest extends \PHPUnit\Framework\TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class ValidateTest extends \PHPUnit\Framework\TestCase
 {
     private ?Validate $validate = null;
 
@@ -10,30 +15,32 @@ class ValidateTest extends \PHPUnit\Framework\TestCase
 
     private int $clientId = 12345;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->validate = new Validate($this->apiKey, $this->clientId);
     }
 
     /**
-     * Test the getter and setter for the API key
-     * @covers \Yubikey\Validate::setApiKey
+     * Test the getter and setter for the API key.
+     *
      * @covers \Yubikey\Validate::getApiKey
+     * @covers \Yubikey\Validate::setApiKey
      */
-    public function testGetSetApiKey()
+    public function testGetSetApiKey(): void
     {
         $preKey = 'testing1234567890';
         $key = base64_encode($preKey);
 
         $this->validate->setApiKey($key);
-        $this->assertEquals($this->validate->getApiKey(), $preKey);
+        static::assertSame($this->validate->getApiKey(), $preKey);
     }
 
     /**
-     * Test the setting of a non-base64 encoded API key
+     * Test the setting of a non-base64 encoded API key.
+     *
      * @covers \Yubikey\Validate::setApiKey
      */
-    public function testSetInvalidApiKey()
+    public function testSetInvalidApiKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $key = 'testing1234^%$#^#';
@@ -41,51 +48,54 @@ class ValidateTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test the getter and setter for the One-time password
-     * @covers \Yubikey\Validate::setOtp
+     * Test the getter and setter for the One-time password.
+     *
      * @covers \Yubikey\Validate::getOtp
+     * @covers \Yubikey\Validate::setOtp
      */
-    public function testGetSetOtp()
+    public function testGetSetOtp(): void
     {
         $otp = base64_encode('testing1234567890');
 
         $this->validate->setOtp($otp);
-        $this->assertEquals($this->validate->getOtp(), $otp);
+        static::assertSame($this->validate->getOtp(), $otp);
     }
 
     /**
-     * Test that the getter/setter for the Client ID works correctly
+     * Test that the getter/setter for the Client ID works correctly.
+     *
      * @covers \Yubikey\Validate::getClientId
      * @covers \Yubikey\Validate::setClientId
      */
-    public function testGetSetClientId()
+    public function testGetSetClientId(): void
     {
         $clientId = 12345;
 
         $this->validate->setClientId($clientId);
-        $this->assertEquals($clientId, $this->validate->getClientId());
+        static::assertSame($clientId, $this->validate->getClientId());
     }
 
     /**
-     * Test that the getter/setter for the "use secure" setting works correctly
-     * @covers \Yubikey\Validate::setUseSecure
+     * Test that the getter/setter for the "use secure" setting works correctly.
+     *
      * @covers \Yubikey\Validate::getUseSecure
+     * @covers \Yubikey\Validate::setUseSecure
      */
-    public function testGetSetUseSecure()
+    public function testGetSetUseSecure(): void
     {
         $useSecure = true;
 
         $this->validate->setUseSecure($useSecure);
-        $this->assertEquals($useSecure, $this->validate->getUseSecure());
+        static::assertSame($useSecure, $this->validate->getUseSecure());
     }
 
     /**
      * Test that an exception is thrown when the "use secure" values
-     *     is not boolean
+     *     is not boolean.
      *
      * @covers \Yubikey\Validate::setUseSecure
      */
-    public function testSetUseSecureInvalid()
+    public function testSetUseSecureInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $useSecure = 'invalid';
@@ -93,57 +103,63 @@ class ValidateTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test that the getter/setter for the host works correctly
-     * @covers \Yubikey\Validate::setHost
+     * Test that the getter/setter for the host works correctly.
+     *
      * @covers \Yubikey\Validate::getHost
+     * @covers \Yubikey\Validate::setHost
      */
-    public function testGetSetHost()
+    public function testGetSetHost(): void
     {
         $host = 'test.foo.com';
 
         $this->validate->setHost($host);
-        $this->assertEquals($this->validate->getHost(), $host);
+        static::assertSame($this->validate->getHost(), $host);
     }
 
     /**
-     * Test that a valid random host is selected if none was previously set
+     * Test that a valid random host is selected if none was previously set.
+     *
      * @covers \Yubikey\Validate::getHost
      */
-    public function testGetRandomHost()
+    public function testGetRandomHost(): void
     {
         $host1 = $this->validate->getHost();
-        $this->assertNotEquals($host1, null);
+        static::assertNotSame($host1, null);
     }
 
     /**
-     * Test that the signature generation is valid
+     * Test that the signature generation is valid.
+     *
      * @covers \Yubikey\Validate::generateSignature
      */
-    public function testSignatureGenerate()
+    public function testSignatureGenerate(): void
     {
-        $data = array('foo' => 'bar');
+        $data = ['foo' => 'bar'];
         $key = $this->validate->getApiKey();
         $hash = preg_replace(
-            '/\+/', '%2B',
+            '/\+/',
+            '%2B',
             base64_encode(hash_hmac('sha1', http_build_query($data), $key, true))
         );
 
         $signature = $this->validate->generateSignature($data);
-        $this->assertEquals($hash, $signature);
+        static::assertSame($hash, $signature);
     }
 
     /**
-     * Test that an exception is thrown when the API is invalid (null or empty)
+     * Test that an exception is thrown when the API is invalid (null or empty).
+     *
      * @covers \Yubikey\Validate::generateSignature
      */
-    public function testSignatureGenerateNoApiKey()
+    public function testSignatureGenerateNoApiKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $key = null;
-        $data = array('foo' => 'bar');
+        $data = ['foo' => 'bar'];
         $validate = new Validate($key, $this->clientId);
         $hash = preg_replace(
-            '/\+/', '%2B',
+            '/\+/',
+            '%2B',
             base64_encode(hash_hmac('sha1', http_build_query($data), $key, true))
         );
 
@@ -151,31 +167,32 @@ class ValidateTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Add a new Host to the list
+     * Add a new Host to the list.
+     *
      * @covers \Yubikey\Validate::addHost
      */
-    public function testAddNewHost()
+    public function testAddNewHost(): void
     {
         $this->validate->addHost('test.com');
-        $this->assertTrue(
-            in_array('test.com', $this->validate->getHosts())
+        static::assertTrue(
+            in_array('test.com', $this->validate->getHosts(), true)
         );
     }
 
     /**
-     * Set the new Hosts list (override)
-     * @covers \Yubikey\Validate::setHosts
+     * Set the new Hosts list (override).
+     *
      * @covers \Yubikey\Validate::getHosts
+     * @covers \Yubikey\Validate::setHosts
      */
-    public function testSetHosts()
+    public function testSetHosts(): void
     {
-        $hosts = array('foo.com');
+        $hosts = ['foo.com'];
         $this->validate->setHosts($hosts);
 
-        $this->assertEquals(
+        static::assertSame(
             $this->validate->getHosts(),
             $hosts
         );
     }
 }
-
