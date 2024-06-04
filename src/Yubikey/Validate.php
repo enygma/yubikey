@@ -46,6 +46,13 @@ class Validate
      */
     private $yubikeyid = null;
 
+    
+    /**
+     * Client ID for API
+     * @var int|null
+     */
+    private $clientId = null;
+
     /**
      * Client ID
      * @var integer
