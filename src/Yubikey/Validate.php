@@ -54,12 +54,6 @@ class Validate
     private $clientId = null;
 
     /**
-     * Client ID
-     * @var integer
-     */
-    private $clientId = null;
-
-    /**
      * Init the object and set the API key, Client ID and optionally hosts
      *
      * @param string $apiKey API Key
