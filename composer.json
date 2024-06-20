@@ -16,8 +16,11 @@
         "php":">=7.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.3.2",
-	"codeclimate/php-test-reporter": "dev-master"
+        "phpunit/phpunit": "^9.5"
+    },
+    "scripts": {
+        "test": "phpunit tests",
+        "test-logic": "@php test.php"
     },
     "autoload":{
         "psr-0":{
