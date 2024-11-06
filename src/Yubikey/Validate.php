@@ -255,7 +255,7 @@ class Validate
         }
 
         $query = http_build_query($data);
-        $query = utf8_encode(str_replace('%3A', ':', $query));
+        $query = mb_convert_encoding(str_replace('%3A', ':', $query), 'UTF-8', 'ISO-8859-1');
 
         $hash = preg_replace(
             '/\+/', '%2B',
